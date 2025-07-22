@@ -1,1 +1,44 @@
-/* You can add global styles to this file, and also import other style files */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.2; /* más sutil */
+  animation: float 18s ease-in-out infinite;
+  z-index: 0;
+}
+
+.blob1 {
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(135deg, #00b4d8, #0077b6);
+  top: -100px;
+  left: -150px;
+}
+
+.blob2 {
+  width: 450px;
+  height: 450px;
+  background: linear-gradient(135deg, #90e0ef, #00b4d8);
+  bottom: -100px;
+  right: -120px;
+}
+
+/* Animación mejorada */
+@keyframes float {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(30px, -30px) scale(1.05);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #0d1b2a; /* azul oscuro sólido */
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+}

@@ -1,0 +1,65 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.dashboard-container {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #0a3b3b 0%, #0c2340 100%);
+}
+
+.products-section {
+  flex-grow: 1;
+  overflow: visible;
+}
+
+
+.main-content {
+  flex-grow: 1;
+}
+
+
+/* Barra de navegación fija */
+nav.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+
+.form-background {
+  background: linear-gradient(135deg, #0a3b3b 0%, #0c2340 100%);
+  padding: 2rem;
+  min-height: 100vh;
+}
+/* Animaciones */
+.fade-in {
+  animation: fadeIn 0.4s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.fade-out {
+  animation: fadeOut 0.3s ease forwards;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
