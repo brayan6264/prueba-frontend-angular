@@ -121,7 +121,7 @@ URL de producción:
 
 ---
 
-## 📬 Autor
+## 📬 Autor.
 
 **Brayan Gómez**  
 💼 Proyecto desarrollado como parte de la prueba técnica.
