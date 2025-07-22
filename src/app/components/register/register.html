@@ -48,10 +48,6 @@
 
       <button type="submit" class="btn btn-success w-100" [disabled]="!formRef.valid">Registrar</button>
     </form>
-
-    <div *ngIf="successMessage" class="alert alert-success mt-2">{{ successMessage }}</div>
-    <div *ngIf="errorMessage" class="alert alert-danger mt-2">{{ errorMessage }}</div>
-
     <button type="button" routerLink="/" class="btn btn-primary w-100 mt-2">Volver a iniciar sesión</button>
   </div>
 </div>
