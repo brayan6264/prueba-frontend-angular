@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { ProductService, Product } from '../../services/product';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,8 +13,10 @@ import { ProductService, Product } from '../../services/product';
   styleUrl: './dashboard.ts.css'
 })
 export class Dashboard implements OnInit {
-  currentView: 'none' | 'create' | 'list' | "purchases"|'buy' = 'none';
+  currentView: 'none' | 'create' | 'list' | 'purchases' | 'buy' = 'none';
   purchases: any[] = [];
+  products: Product[] = [];
+
   newProduct: Product = {
     product_id: 0,
     name: '',
@@ -22,79 +24,82 @@ export class Dashboard implements OnInit {
     price: 0
   };
 
-  products: Product[] = [];
   selectedProductId: number | null = null;
   quantity: number = 1;
 
-  successMessage = '';
-  errorMessage = '';
-
-  constructor(private productService: ProductService,  private router: Router) {}
+  constructor(
+    private productService: ProductService,
+    private router: Router,
+    private toastr: ToastrService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    this.loadProducts();
-    this.showPurchases();
     this.currentView = 'none';
   }
 
   toggleCreateForm() {
+    this.resetForms();
     this.currentView = 'create';
   }
 
+  toggleBuyForm() {
+    this.resetForms();
+    this.currentView = 'buy';
+  }
+
   loadProducts() {
-    this.currentView = 'list';
-    console.log('Cargando productos...');
     this.productService.getProducts().subscribe({
       next: res => {
-        console.log('Productos cargados:', res);
         this.products = res;
+        this.currentView = 'list';
+        this.cdr.detectChanges();
       },
       error: err => {
         console.error('Error al cargar productos:', err);
+        this.toastr.error('Error al cargar productos', 'Error');
       }
     });
   }
 
-  toggleBuyForm() {
-    this.currentView = 'buy';
+  showPurchases() {
+    this.productService.getMyPurchases().subscribe({
+      next: res => {
+        this.purchases = res;
+        this.currentView = 'purchases';
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        console.error('Error al cargar compras:', err);
+        this.toastr.error('No se pudieron cargar las compras.', 'Error');
+      }
+    });
   }
-onProductChange(event: any) {
-  const id = Number(event);
-  const product = this.products.find(p => p.name === event);
-  this.selectedProductId = product ? product.product_id : null;
-  console.log('Producto seleccionado:', this.selectedProductId);
-}
+
   submitProductForm() {
-    console.log('Producto a enviar:', this.newProduct);
     this.productService.createProduct(this.newProduct).subscribe({
       next: () => {
-        this.successMessage = 'Producto creado exitosamente.';
-        this.errorMessage = '';
-        this.newProduct = { product_id: 0, name: '', url_image: '', price: 0 };
-        this.currentView = 'none';
-        setTimeout(() => this.successMessage = '', 4000);
+        this.toastr.success('Producto creado exitosamente', 'Éxito');
+        this.resetForms();
+        this.loadProducts(); // Recargar productos y mostrar vista
       },
       error: err => {
         console.error('Error al crear producto:', err);
-        this.errorMessage = 'No se pudo crear el producto. Verifica los datos o tu sesión.';
-        this.successMessage = '';
-        setTimeout(() => this.errorMessage = '', 4000);
+        this.toastr.error('Error al crear producto', 'Error');
       }
     });
   }
 
   submitBuyForm() {
     const parsedProductId = Number(this.selectedProductId);
-    console.log('Datos de compra:', parsedProductId, this.quantity);
 
     if (!parsedProductId || this.quantity < 1) {
-      this.errorMessage = 'Selecciona un producto válido o una cantidad mayor a 0.';
       return;
     }
 
     const userId = localStorage.getItem('user_id');
     if (!userId) {
-      this.errorMessage = 'Usuario no autenticado.';
+      this.toastr.error('Debes iniciar sesión para comprar productos.', 'Error');
       return;
     }
 
@@ -104,35 +109,32 @@ onProductChange(event: any) {
       this.quantity
     ).subscribe({
       next: () => {
-        this.successMessage = 'Compra realizada con éxito.';
-        this.errorMessage = '';
-        this.selectedProductId = null;
-        this.quantity = 1;
-        setTimeout(() => this.successMessage = '', 4000);
+        this.toastr.success('Compra realizada con éxito', 'Éxito');
+        this.resetForms();
+        this.showPurchases(); // Recargar compras y mostrar vista
       },
       error: err => {
         console.error('Error en la compra:', err);
-        this.errorMessage = 'No se pudo realizar la compra.';
-        this.successMessage = '';
-        setTimeout(() => this.errorMessage = '', 4000);
+        this.toastr.error('No se pudo realizar la compra.', 'Error');
       }
     });
   }
-  showPurchases() {
-  this.currentView = 'purchases';
-  this.productService.getMyPurchases().subscribe({
-    next: res => {
-      this.purchases = res;
-      console.log('Compras:', res);
-    },
-    error: err => {
-      console.error('Error al cargar compras:', err);
-      this.errorMessage = 'No se pudieron cargar las compras.';
-    }
-  });
+
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user_id');
+    this.toastr.success('Sesión cerrada exitosamente', 'Éxito');
+    this.currentView = 'none';
+  }
+
+  onProductChange(event: any) {
+    const product = this.products.find(p => p.name === event);
+    this.selectedProductId = product ? product.product_id : null;
+  }
+
+  private resetForms() {
+    this.newProduct = { product_id: 0, name: '', url_image: '', price: 0 };
+    this.selectedProductId = null;
+    this.quantity = 1;
+  }
 }
-logout() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user_id');
-  this.currentView = 'none';
-}}

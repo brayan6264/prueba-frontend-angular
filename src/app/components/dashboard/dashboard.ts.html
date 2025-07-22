@@ -1,4 +1,5 @@
-<div class="dashboard-container">
+<div class="dashboard-container d-flex flex-column vh-100">
+  <!-- NAVBAR -->
   <nav class="navbar navbar-dark bg-dark px-4 sticky-top">
     <span class="navbar-brand mb-0 h1">Bienvenido</span>
     <div class="d-flex gap-2">
@@ -10,95 +11,96 @@
     </div>
   </nav>
 
-  <!-- Vista de productos -->
-  <div *ngIf="currentView === 'list'" class="products-section py-4 px-5">
-    <h4 class="text-white mb-3">Lista de Productos</h4>
-    <div class="row">
-      <div class="col-md-4 mb-4" *ngFor="let product of products">
-        <div class="card h-100 bg-dark text-white">
-          <img [src]="product.url_image" class="card-img-top" alt="Imagen del producto" style="max-height: 200px; object-fit: cover;">
-          <div class="card-body">
-            <h5 class="card-title">{{ product.name }}</h5>
-            <p class="card-text">${{ product.price }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Formulario de creación -->
-  <div *ngIf="currentView === 'create'" class="form-background d-flex justify-content-center align-items-center">
-    <div class="card p-4 shadow-lg bg-dark text-white" style="min-width: 350px; max-width: 400px;">
-      <h3 class="mb-4 text-center">Crear Producto</h3>
-      <form (ngSubmit)="submitProductForm()">
-        <div class="mb-3">
-          <label for="name" class="form-label">Nombre del producto</label>
-          <input [(ngModel)]="newProduct.name" name="name" id="name" class="form-control" required>
-        </div>
-        <div class="mb-3">
-          <label for="url_image" class="form-label">Url de la imagen</label>
-          <textarea [(ngModel)]="newProduct.url_image" name="url_image" id="url_image" class="form-control" rows="2"></textarea>
-        </div>
-        <div class="mb-3">
-          <label for="price" class="form-label">Precio</label>
-          <input type="number" [(ngModel)]="newProduct.price" name="price" id="price" class="form-control" required>
-        </div>
-        <div *ngIf="successMessage" class="alert alert-success mt-2 text-center">{{ successMessage }}</div>
-        <div *ngIf="errorMessage" class="alert alert-danger mt-2 text-center">{{ errorMessage }}</div>
-        <button type="submit" class="btn btn-success w-100">Guardar Producto</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Formulario de compra -->
-  <div *ngIf="currentView === 'buy'" class="form-background d-flex justify-content-center align-items-center">
-    <div class="card p-4 shadow-lg bg-dark text-white" style="min-width: 350px; max-width: 450px;">
-      <h3 class="mb-4 text-center">Comprar Producto</h3>
-      <form (ngSubmit)="submitBuyForm()">
-        <div class="mb-3">
-          <label for="product_id" class="form-label">Producto</label>
-          <select 
-            [(ngModel)]="selectedProductId" 
-            name="selectedProductId" 
-            id="product_id" 
-            class="form-control" 
-            required>
-            <option [ngValue]="null" disabled>Selecciona un producto</option>
-            <option *ngFor="let product of products" [ngValue]="product.product_id">
-              {{ product.name }}
-            </option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="quantity" class="form-label">Cantidad</label>
-          <input type="number" [(ngModel)]="quantity" name="quantity" id="quantity" class="form-control" required min="1">
-        </div>
-        <div *ngIf="successMessage" class="alert alert-success mt-2 text-center">{{ successMessage }}</div>
-        <div *ngIf="errorMessage" class="alert alert-danger mt-2 text-center">{{ errorMessage }}</div>
-        <button type="submit" class="btn btn-primary w-100">Confirmar Compra</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Vista de compras (solo visible si currentView === 'purchases') -->
-  <div *ngIf="currentView === 'purchases'" class="products-section py-4 px-5">
-    <h4 class="text-white mb-3">Mis Compras</h4>
-    <ng-container *ngIf="purchases.length > 0; else emptyPurchases">
+  <!-- CONTENIDO DESPLAZABLE -->
+  <div class="flex-grow-1 overflow-auto">
+    
+    <!-- Vista de productos -->
+    <div *ngIf="currentView === 'list'" class="products-section py-4 px-5">
+      <h4 class="text-white mb-3">Lista de Productos</h4>
       <div class="row">
-        <div class="col-md-4 mb-4" *ngFor="let purchase of purchases">
+        <div class="col-md-4 mb-4" *ngFor="let product of products">
           <div class="card h-100 bg-dark text-white">
+            <img [src]="product.url_image" class="card-img-top" alt="Imagen del producto" style="max-height: 200px; object-fit: cover;">
             <div class="card-body">
-              <h5 class="card-title">Producto: {{ purchase.product_name }}</h5>
-              <p class="card-text">Cantidad: {{ purchase.total_products }}</p>
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text">${{ product.price }}</p>
             </div>
           </div>
         </div>
       </div>
-    </ng-container>
-    <ng-template #emptyPurchases>
-      <div *ngIf="currentView === 'purchases'">
-        <p class="text-white">Aún no has realizado compras.</p>
+    </div>
+
+    <!-- Formulario de creación -->
+    <div *ngIf="currentView === 'create'" class="form-background d-flex justify-content-center align-items-center py-5">
+      <div class="card p-4 shadow-lg bg-dark text-white" style="min-width: 350px; max-width: 400px;">
+        <h3 class="mb-4 text-center">Crear Producto</h3>
+        <form (ngSubmit)="submitProductForm()">
+          <div class="mb-3">
+            <label for="name" class="form-label">Nombre del producto</label>
+            <input [(ngModel)]="newProduct.name" name="name" id="name" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="url_image" class="form-label">Url de la imagen</label>
+            <textarea [(ngModel)]="newProduct.url_image" name="url_image" id="url_image" class="form-control" rows="2"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="price" class="form-label">Precio</label>
+            <input type="number" [(ngModel)]="newProduct.price" name="price" id="price" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-success w-100">Guardar Producto</button>
+        </form>
       </div>
-    </ng-template>
+    </div>
+
+    <!-- Formulario de compra -->
+    <div *ngIf="currentView === 'buy'" class="form-background d-flex justify-content-center align-items-center py-5">
+      <div class="card p-4 shadow-lg bg-dark text-white" style="min-width: 350px; max-width: 450px;">
+        <h3 class="mb-4 text-center">Comprar Producto</h3>
+        <form (ngSubmit)="submitBuyForm()">
+          <div class="mb-3">
+            <label for="product_id" class="form-label">Producto</label>
+            <select 
+              [(ngModel)]="selectedProductId" 
+              name="selectedProductId" 
+              id="product_id" 
+              class="form-control" 
+              required>
+              <option [ngValue]="null" disabled>Selecciona un producto</option>
+              <option *ngFor="let product of products" [ngValue]="product.product_id">
+                {{ product.name }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="quantity" class="form-label">Cantidad</label>
+            <input type="number" [(ngModel)]="quantity" name="quantity" id="quantity" class="form-control" required min="1">
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Confirmar Compra</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Vista de compras -->
+    <div *ngIf="currentView === 'purchases'" class="products-section py-4 px-5">
+      <h4 class="text-white mb-3">Mis Compras</h4>
+      <ng-container *ngIf="purchases.length > 0; else emptyPurchases">
+        <div class="row">
+          <div class="col-md-4 mb-4" *ngFor="let purchase of purchases">
+            <div class="card h-100 bg-dark text-white">
+              <div class="card-body">
+                <h5 class="card-title">Producto: {{ purchase.product_name }}</h5>
+                <p class="card-text">Cantidad: {{ purchase.total_products }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #emptyPurchases>
+        <div *ngIf="currentView === 'purchases'">
+          <p class="text-white">Aún no has realizado compras.</p>
+        </div>
+      </ng-template>
+    </div>
+
   </div>
 </div>
