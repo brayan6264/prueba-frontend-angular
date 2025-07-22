@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { NG_APP_API_URL } from '../../environments/environment.generated';
 
 export interface Product {
   product_id:number;
@@ -13,7 +14,7 @@ export interface Product {
   providedIn: 'root'
 })
 export class ProductService {
-  private apiUrl = 'https://prueba-backend-fastapi.onrender.com/api/products';
+  private apiUrl = `${NG_APP_API_URL}products`;
   constructor(private http: HttpClient) {}
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');

@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth';
 import { ToastrService } from 'ngx-toastr';
+import { NG_APP_API_URL } from '../../../environments/environment.generated';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,7 @@ export class Login {
 
   isLoading = signal(false); 
 
-  private apiUrl = 'https://prueba-backend-fastapi.onrender.com/api/users/login';
+  private apiUrl = `${NG_APP_API_URL}users/login`;
 
   constructor(
     private http: HttpClient,

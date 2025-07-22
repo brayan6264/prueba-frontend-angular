@@ -1,0 +1,1 @@
+export const NG_APP_API_URL = 'https://prueba-backend-fastapi.onrender.com/api/';

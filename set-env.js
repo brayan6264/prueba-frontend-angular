@@ -2,7 +2,9 @@
 const dotenv = require('dotenv');
 const dotenvExpand = require('dotenv-expand');
 const fs = require('fs');
+const path = require('path');
 
+// Carga y expande variables de entorno
 const myEnv = dotenv.config();
 dotenvExpand.expand(myEnv);
 
@@ -12,5 +14,12 @@ const envVars = Object.keys(process.env)
   .map(k => `export const ${k} = '${process.env[k]}';`)
   .join('\n');
 
-// Escribe las variables como un archivo TypeScript
+// Asegura que el directorio src/environments exista
+const envDir = path.resolve(__dirname, 'src/environments');
+if (!fs.existsSync(envDir)) {
+  fs.mkdirSync(envDir, { recursive: true });
+}
+
+// Escribe las variables como archivo TypeScript
 fs.writeFileSync('./src/environments/environment.generated.ts', envVars);
+
