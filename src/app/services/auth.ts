@@ -4,9 +4,11 @@ import { Router } from '@angular/router';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private tokenKey = 'token';
+  private userIdKey = 'user_id';
 
-  loginWithToken(token: string): void {
+  loginWithToken(token: string, id:string): void {
     localStorage.setItem(this.tokenKey, token);
+    localStorage.setItem(this.userIdKey, id);
   }
 
   logout(): void {

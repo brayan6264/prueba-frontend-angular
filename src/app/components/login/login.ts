@@ -33,7 +33,7 @@ export class Login {
     console.log('Payload to send:', payload);
     this.http.post<any>(this.apiUrl, payload).subscribe({
       next: res => {
-        this.auth.loginWithToken(res.access_token);
+        this.auth.loginWithToken(res.access_token, res.user_id);
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
